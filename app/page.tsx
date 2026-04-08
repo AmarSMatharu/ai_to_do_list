@@ -11,11 +11,11 @@ export default function Home() {
   const [showInput, setShowInput] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
-    fetch('/api/tasks')
-      .then(r => r.json())
-      .then(setTasks)
-  }, [])
+  setMounted(true)
+  fetch('/api/tasks', { cache: 'no-store' })
+    .then(r => r.json())
+    .then(setTasks)
+}, [])
 
   async function addTask(taskInput: string) {
     if (!taskInput.trim()) return
@@ -33,13 +33,13 @@ export default function Home() {
   }
 
   async function toggleTask(id: string, completed: boolean) {
-    await fetch(`/api/tasks/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ completed: !completed })
-    })
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !completed } : t))
-  }
+  await fetch(`/api/tasks/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ completed: !completed })
+  })
+  setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !completed } : t))
+}
 
   async function deleteTask(id: string) {
     await fetch(`/api/tasks/${id}`, { method: 'DELETE' })

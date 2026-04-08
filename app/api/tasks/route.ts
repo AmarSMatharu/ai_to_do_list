@@ -2,13 +2,17 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import Anthropic from '@anthropic-ai/sdk'
 
+export const dynamic = 'force-dynamic'
+
 const client = new Anthropic()
 
 // GET all tasks
 export async function GET() {
   const tasks = await prisma.task.findMany({
-    orderBy: [{ completed: 'asc' }, { priority: 'desc' }, { createdAt: 'desc' }]
+    where: { completed: false },  // only fetch incomplete tasks
+    orderBy: [{ priority: 'desc' }, { createdAt: 'desc' }]
   })
+  console.log('Tasks from DB:', tasks)
   return NextResponse.json(tasks)
 }
 
